@@ -1,11 +1,31 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,800&display=swap" rel="stylesheet">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("theme")||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light")}catch(e){document.documentElement.dataset.theme="light"}</script>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,800&family=Caveat:wght@500&family=Silkscreen&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css"><title>Video Hub</title></head><body>
 <main class="full">
-<header class="card"><h1>Video Hub</h1></header>
+<div class="logo px">&gt; Video Hub</div>
 <div class="hub">
- <a class="card big o" href="videos.html"><b>Final Videos</b><span>Watch and download the finished edits</span></a>
- <a class="card big s" href="scripts.html"><b>Video Scripts</b><span>Read along with the voice-over</span></a>
+ <a class="big ca" href="videos.html"><h2>Final<br>Videos</h2><em>watch &amp; download</em><svg class="art" viewBox="0 0 200 220" aria-hidden="true">
+ <rect x="48" y="14" width="104" height="176" rx="24" fill="var(--acc)" stroke="var(--t)" stroke-width="6"/>
+ <rect x="80" y="26" width="40" height="9" rx="4.5" fill="var(--t)"/>
+ <circle cx="100" cy="100" r="31" fill="var(--t)"/><path d="M91 84L119 100 91 116z" fill="var(--acc)"/>
+ <rect x="66" y="158" width="68" height="9" rx="4.5" fill="var(--t)" opacity=".25"/><rect x="66" y="158" width="30" height="9" rx="4.5" fill="var(--t)"/>
+ <path class="sp" d="M26 50l5 11 11 5-11 5-5 11-5-11-11-5 11-5z" fill="var(--acc)" stroke="var(--t)" stroke-width="3" stroke-linejoin="round"/>
+ <path class="sp d2" d="M170 140l4 9 9 4-9 4-4 9-4-9-9-4 9-4z" fill="var(--acc)" stroke="var(--t)" stroke-width="3" stroke-linejoin="round"/>
+ <rect x="168" y="36" width="9" height="9" fill="var(--t)"/><rect x="20" y="150" width="7" height="7" fill="var(--t)"/><rect x="176" y="92" width="6" height="6" fill="var(--t)"/>
+</svg><span class="pill">VIEW</span></a>
+ <a class="big cb" href="scripts.html"><h2>Video<br>Scripts</h2><em>read along with the voice</em><svg class="art" viewBox="0 0 200 220" aria-hidden="true">
+ <rect x="38" y="18" width="124" height="172" rx="18" fill="var(--pp)" stroke="var(--t)" stroke-width="6"/>
+ <rect x="58" y="46" width="84" height="10" rx="5" fill="var(--t)"/>
+ <rect x="54" y="68" width="50" height="22" rx="6" fill="var(--acc)"/><rect x="60" y="74" width="38" height="10" rx="5" fill="var(--t)"/>
+ <rect x="110" y="74" width="32" height="10" rx="5" fill="var(--t)" opacity=".5"/>
+ <rect x="58" y="102" width="84" height="10" rx="5" fill="var(--t)" opacity=".5"/><rect x="58" y="126" width="60" height="10" rx="5" fill="var(--t)" opacity=".5"/><rect x="58" y="150" width="74" height="10" rx="5" fill="var(--t)" opacity=".5"/>
+ <rect class="cur" x="124" y="124" width="7" height="16" fill="var(--acc)"/>
+ <path class="sp" d="M178 44l4 9 9 4-9 4-4 9-4-9-9-4 9-4z" fill="var(--acc)" stroke="var(--t)" stroke-width="3" stroke-linejoin="round"/>
+ <path class="sp d2" d="M22 150l4 9 9 4-9 4-4 9-4-9-9-4 9-4z" fill="var(--acc)" stroke="var(--t)" stroke-width="3" stroke-linejoin="round"/>
+ <rect x="16" y="50" width="8" height="8" fill="var(--t)"/><rect x="174" y="150" width="7" height="7" fill="var(--t)"/>
+</svg><span class="pill">VIEW</span></a>
 </div>
 </main>
+<script src="lib.js"></script>
 </body></html>
