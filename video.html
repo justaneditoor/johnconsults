@@ -1,0 +1,23 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"><title>Video</title></head><body>
+<main>
+<a class="back" href="videos.html">&larr; All videos</a>
+<header class="card"><h1 id="title">Loading...</h1></header>
+<div class="card" id="res"></div>
+</main>
+<script src="lib.js"></script>
+<script>
+const f=new URLSearchParams(location.search).get("f");
+(async()=>{
+ if(!f){$("title").textContent="No video selected";return}
+ const info=await readInfo("videos",f);
+ $("title").textContent=info.title;document.title=info.title;
+ if(!info.video){$("res").append(msg("No video link yet. Open videos/"+f+"/info.txt on GitHub and add a line:  Video: your Google Drive link"));return}
+ const w=buildEmbed(info.video,info.wide,false),dl=driveDownload(info.video);
+ if(dl){const a=el("a","btn");a.href=dl;a.textContent="Download video";w.append(a);
+  const h=el("p","hint");h.textContent="Downloads the original file. Very large files may show a Google confirmation page first.";w.append(h)}
+ $("res").append(w);
+})();
+</script>
+</body></html>

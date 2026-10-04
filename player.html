@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"><title>Script</title></head><body>
+<main style="padding-bottom:210px">
+<a class="back" href="scripts.html">&larr; All scripts</a>
+<header class="card"><h1 id="title">Loading...</h1></header>
+<div class="card" id="res" hidden></div>
+<article class="card" id="box"><p class="note">Loading audio and syncing the text...</p></article>
+</main>
+<div class="fade"></div>
+<div class="dock">
+ <button id="play" aria-label="Play audio" disabled></button>
+ <div class="track"><div class="np" id="np"></div>
+  <input id="bar" type="range" min="0" max="1000" value="0" aria-label="Seek">
+  <div class="time"><b id="cur">0:00</b> <i>/</i> <b id="tot">0:00</b></div></div>
+</div>
+<audio id="audio" preload="auto"></audio>
+<script src="lib.js"></script><script src="align.js"></script>
+<script>
+const audio=$("audio"),box=$("box"),btn=$("play"),bar=$("bar");
+const PLAY='<svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg>',PAUSE='<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
+btn.innerHTML=PLAY;
+const folder=new URLSearchParams(location.search).get("s");
+const fail=m=>{box.innerHTML='<p class="note"></p>';box.firstChild.textContent=m};
+let words=[],active=-1,lastUser=0;
+["wheel","touchmove","keydown"].forEach(e=>addEventListener(e,()=>lastUser=Date.now(),{passive:true}));
+function follow(e){
+ if(Date.now()-lastUser<4000)return;
+ scrollTo({top:scrollY+e.getBoundingClientRect().top-innerHeight*0.38,behavior:"smooth"});
+}
+async function init(){
+ if(!folder)return fail("No script selected. Go back to All scripts.");
+ const info=await readInfo("scripts",folder);
+ $("title").textContent=info.title;$("np").textContent=info.title;document.title=info.title;
+ if(info.video){$("res").hidden=false;$("res").append(buildEmbed(info.video,info.wide,true))}
+ const base="scripts/"+encodeURIComponent(folder)+"/";let txt,ab;
+ try{
+  const [a,b]=await Promise.all([fetch(base+"script.txt?"+Date.now()),fetch(base+"audio.mp3")]);
+  if(!a.ok||!b.ok)throw 0;txt=await a.text();ab=await b.arrayBuffer();
+ }catch(e){return fail("Could not load script.txt / audio.mp3 from folder: "+folder+". Open this page from your live link (not by double-clicking the file), and check that both files are inside the folder.")}
+ audio.src=URL.createObjectURL(new Blob([ab],{type:"audio/mpeg"}));
+ await new Promise(r=>{if(audio.readyState>=1)r();else audio.addEventListener("loadedmetadata",r,{once:true});audio.addEventListener("error",r,{once:true})});
+ $("tot").textContent=fmt(audio.duration||0);
+ const lines=parseScript(txt);let data;
+ try{
+  const ctx=new(window.AudioContext||window.webkitAudioContext)();
+  const buf=await ctx.decodeAudioData(ab.slice(0));
+  data=alignBest(buf.getChannelData(0),buf.sampleRate,lines);ctx.close&&ctx.close();
+ }catch(e){data=align(new Float32Array(Math.max(1000,Math.round((audio.duration||60)*1000))).fill(1),1000,lines,13)}
+ box.innerHTML="";
+ data.forEach(l=>{const d=el("div","l"+(l.b?" b":"")+(l.br?" br":""));
+  l.w.forEach(([t,s])=>{const e=el("span","w");e.textContent=t;
+   e.onclick=()=>{audio.currentTime=s;audio.play()};d.append(e," ");words.push({el:e,s})});box.append(d)});
+ btn.disabled=false;
+}
+function update(){
+ const t=audio.currentTime;let idx=-1;
+ for(let i=0;i<words.length;i++){if(words[i].s<=t)idx=i;else break}
+ if(idx!==active){
+  words.forEach((w,i)=>{w.el.classList.toggle("done",i<idx);w.el.classList.toggle("now",i===idx)});active=idx;
+  if(idx>=0&&!audio.paused)follow(words[idx].el);
+ }
+ $("cur").textContent=fmt(t);
+ if(audio.duration){const p=t/audio.duration*1000;bar.value=p;bar.style.setProperty("--p",p/10+"%")}
+}
+const loop=()=>{update();if(!audio.paused)requestAnimationFrame(loop)};
+audio.addEventListener("play",()=>{btn.innerHTML=PAUSE;btn.setAttribute("aria-label","Pause audio");loop()});
+audio.addEventListener("pause",()=>{btn.innerHTML=PLAY;btn.setAttribute("aria-label","Play audio")});
+audio.addEventListener("ended",()=>{words.forEach(w=>{w.el.classList.add("done");w.el.classList.remove("now")})});
+audio.addEventListener("seeked",update);
+btn.onclick=()=>audio.paused?audio.play():audio.pause();
+bar.oninput=()=>{if(audio.duration)audio.currentTime=bar.value/1000*audio.duration};
+init();
+</script>
+</body></html>
