@@ -94,15 +94,15 @@ function initFX(){
  const g=c.getContext("2d"),still=matchMedia("(prefers-reduced-motion:reduce)").matches,U=4;
  const SH={plus:[[0,0],[1,0],[-1,0],[0,1],[0,-1]],dot:[[0,0]],x:[[-1,-1],[1,-1],[0,0],[-1,1],[1,1]],sq:[[0,0],[1,0],[0,1],[1,1]],chev:[[0,0],[1,1],[2,2],[1,3],[0,4]]};
  const K=Object.keys(SH),rnd=(a,b)=>a+Math.random()*(b-a);let W=0,H=0,d=1,P=[],last=performance.now();
- const mk=init=>({x:rnd(0,W),y:init?rnd(0,H):H+20,s:SH[K[Math.random()*K.length|0]],vx:rnd(-6,6),vy:-rnd(5,18),ph:rnd(0,6.28),tw:rnd(1,3),g:Math.random()<.28,z:Math.random()<.2?2:1});
+ const mk=init=>({x:rnd(0,W),y:init?rnd(0,H):H+20,s:SH[K[Math.random()*K.length|0]],vx:rnd(-2,2),vy:-rnd(3,8),ph:rnd(0,6.28),tw:rnd(.4,1.1),g:Math.random()<.2,z:Math.random()<.2?2:1});
  function size(){const w=innerWidth,h=innerHeight;if(w===W&&Math.abs(h-H)<140)return;
-  d=Math.min(devicePixelRatio||1,2);W=w;H=h;c.width=W*d;c.height=H*d;P=Array.from({length:Math.round(W*H/16000)},()=>mk(true))}
+  d=Math.min(devicePixelRatio||1,2);W=w;H=h;c.width=W*d;c.height=H*d;P=Array.from({length:Math.max(4,Math.round(W*H/60000))},()=>mk(true))}
  function frame(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,W,H);
   const base=document.documentElement.dataset.theme==="dark"?"255,255,255":"16,16,16";
   P.forEach(p=>{
    if(!still){p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.y<-24||p.x<-24||p.x>W+24)Object.assign(p,mk(false))}
-   const a=still?.5:.25+.6*Math.abs(Math.sin(now/1000*p.tw+p.ph));
+   const a=still?.5:.18+.4*Math.abs(Math.sin(now/1000*p.tw+p.ph));
    g.fillStyle=p.g?"rgba(46,232,79,"+a+")":"rgba("+base+","+(a*.5)+")";
    const u=U*p.z,X=Math.round(p.x/U)*U,Y=Math.round(p.y/U)*U;p.s.forEach(([dx,dy])=>g.fillRect(X+dx*u,Y+dy*u,u,u))});
   if(!still)requestAnimationFrame(frame)}
